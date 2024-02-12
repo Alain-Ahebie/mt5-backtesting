@@ -32,10 +32,11 @@ class RsiOscillator(Strategy):
 bt = Backtest(GOOG, RsiOscillator, cash= 10_000)
 
 stats = bt.optimize(
-    upper_bound = range(50, 85, 5),
-    lower_bound = range(10, 45, 5),
+    upper_bound = range(10, 85, 5),
+    lower_bound = range(10, 85, 5),
     rsi_window = range(10, 30, 2),
-    maximize= 'Sharpe Ratio'
+    maximize= 'Sharpe Ratio',
+    constraint= lambda param : param.upper_bound > param.lower_bound
 )
 print(stats)
 
