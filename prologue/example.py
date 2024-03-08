@@ -2,11 +2,19 @@ import warnings
 warnings.filterwarnings("ignore")
 from backtesting import Backtest, Strategy
 from backtesting.test import GOOG
-from backtesting.lib import crossover
+from backtesting.lib import crossover, plot_heatmaps
+
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 import talib
 
-
+def optim_func(series):
+    
+    if series["# Trades"] < 10:
+        return -1
+    
+    return series["Equity Final [$]"] / series["Exposure Time [%]"]
 
 class RsiOscillator(Strategy):
     
@@ -31,13 +39,8 @@ class RsiOscillator(Strategy):
 
 bt = Backtest(GOOG, RsiOscillator, cash= 10_000)
 
-stats = bt.optimize(
-    upper_bound = range(10, 85, 5),
-    lower_bound = range(10, 85, 5),
-    rsi_window = range(10, 30, 2),
-    maximize= 'Sharpe Ratio',
-    constraint= lambda param : param.upper_bound > param.lower_bound
-)
+stats = bt.run()
 print(stats)
+# name =  stats["_strategy"]
+# bt.plot(filename=f"C:/Users/AHEBIE/Documents/GHUB/mt5-backtesting/prologue/plots/{name}.html")
 
-bt.plot()
